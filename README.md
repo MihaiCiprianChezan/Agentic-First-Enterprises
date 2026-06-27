@@ -723,8 +723,13 @@ Readers are encouraged to compare the sources below and judge for themselves.
 
 ---
 
-**A note on intent**
+**Note on intent**
 
 This is offered as *a* model, not *the* model. It does not claim to be the best, the most complete, or free of flaws — only to be coherent, honest, and usable. The field has no shortage of agentic frameworks; what it lacks is a *unified* one — simple enough to follow, small enough to hold in your head, and complete enough to build from — that treats governance, accountability, and human judgment as load-bearing rather than as afterthoughts. That gap is what this sets out to fill.
 
 Everything here is meant to be argued with. Where it is wrong, correct it; where it is thin, deepen it; where something better exists, let that win. A model earns its place by being useful to the people building real things — not by being defended. It is published in that spirit: a shared starting point for a problem we are all meeting at the same time, offered in the hope it spares someone the work of inventing it alone.
+
+---
+
+
+>This is not only a theoretical thesis. A reference practical implementation sample of an Organization-Cell can be found at: https://github.com/MihaiCiprianChezan/Agentic-Enterprises-A
