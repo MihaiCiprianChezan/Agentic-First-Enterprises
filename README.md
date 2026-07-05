@@ -1,7 +1,7 @@
 ---
 Author: Mihai-Ciprian Chezan
-Version: 1.5.0
-Date: 15.06.2026
+Version: 1.6.0
+Date: 05.07.2026
 ---
 
 # The Agent-Native Enterprise
@@ -35,7 +35,7 @@ These are the non-negotiable rules. Everything below is a consequence of them.
 6. **Authority is graduated and explicit.** Every action class has a declared autonomy level. Blast radius determines how much human gating it requires.
 7. **One abstraction per layer.** A layer never reaches across levels. The top layer does not know about individual tool calls; a worker does not know the global strategy. This is what keeps the system debuggable.
 8. **Add hierarchy only when complexity forces it.** Most designs overshoot by one tier. Start with the fewest layers that solve the problem.
-9. **Office ≠ Role; humans touch the org through two channels only.** A human holds an *Office* (accountability and representation in the human world); an agent fills a *Role* (operations in the agentic org). They are not one-to-one. Humans affect the agentic org through exactly two channels — the constitution, and impersonation of a Role — and nothing else.
+9. **Office ≠ Role.** A human holds an *Office* (accountability and representation in the human world); an agent fills a *Role* (operations in the agentic org). They are not one-to-one. The corollary is the **two-channel rule**: humans affect the agentic org through exactly two channels — the constitution, and impersonation of a Role — and nothing else. One invariant, two faces: the distinction says what a human *is* to the org; the corollary says how a human *reaches* it.
 10. **Governance is the compiled constitution — its rule-shaped part.** The Governance plane encodes the *projection* of the constitution that reduces to rules: authority ceilings, permissions, budget caps, required gates. The purposive core — whether the org still serves human interest — does not compile and stays in human Board review (§3). Every encoded constraint traces back to a written human mandate; agents never author their own constraints. The plane enforces the mechanical fraction; human judgment carries the substantive remainder.
 11. **A cell is sovereign at its boundary.** A cell is an organization in itself. Nothing outside it — a parent organization or a sibling cell included — may affect it except through its own constitution or an authorized Role, exactly as inside. The boundary obeys the same law as the interior.
 
@@ -56,6 +56,8 @@ A **role** is a declared contract with this shape:
 | **Observability hooks** | The traces, costs, and signals it must emit. |
 
 An **implementer** — agent or human — satisfies the contract. The system binds to the contract. This makes "a human jumps into the role" a runtime substitution, not a redesign. It is the same principle as an interface with interchangeable implementations: the caller is unaffected by which one is running. The contract is given here as *fields and guarantees*, deliberately not as any particular file format or schema language: the model specifies what a role must declare, never how to write it down. That omission is intentional — it keeps the model independent of any toolchain and any era of tooling.
+
+**Who writes the acceptance criteria.** Criteria are authored by the role that *issues* the work — Direction sets them when it specifies a goal (turning demand into well-specified direction is that role's one job, §4.1), and each decomposition inherits or refines them downward. Two roles are barred from authoring them: the Executor (the producer cannot write its own bar) and the Verifier (the gate cannot either — it scores against criteria it did not set, which is what keeps the checker's independence real). Every criterion must be *checkable* — a statement the Verifier can score as met or unmet, not an aspiration. When the Verifier finds a criterion untestable or ambiguous, it does not interpret silently: it returns the goal to Direction as an escalation, the same way it returns a failing output. Ambiguity is forced back to the role paid to resolve it, never absorbed by the role paid to judge.
 
 **Human impersonation on demand** is the default mode for substitution: every role runs as an agent unless and until a human assumes it for a specific need (a hard decision, a novel situation, a correction, an audit), then hands it back.
 
@@ -155,7 +157,7 @@ Every role: agent by default, human impersonation on demand.
 Roles run *inside* four cross-cutting planes. Planes are shared infrastructure every role depends on.
 
 - **Governance plane** — the machine-readable, runtime-enforced encoding of the Board's constitution (§3): authority limits, guardrails, constraints, and an append-only audit trail. Policy is data the agents read at runtime, not documentation humans read later. Nothing acts outside it.
-- **Memory / context plane** — durable shared state: the current state of every goal, an append-only event history of decisions and actions, the artifacts produced, and a **version registry** that identifies every agent version and parallel variant and attributes activity to it (without which the Auditor cannot compare versions). A *version* here is the whole behavioral bundle — logic, prompts, weights, configuration — not merely code; and a human handbrake adjustment either runs under the existing version or is recorded as a tracked variant, never an untracked change, so the registry stays the source of truth. This is what lets a flow pause on Friday and resume on Monday, and what lets a human take over a role with full context. For a takeover to be more than picking up raw state, this history must capture the *decision trail* — what was decided and why, not only what changed — so whoever inherits the role inherits the reasoning, not just the outcome. Legible reasoning, not merely stored state, is what makes a clean handover possible.
+- **Memory / context plane** — durable shared state: the current state of every goal, an append-only event history of decisions and actions, the artifacts produced, and a **version registry** that identifies every agent version and parallel variant and attributes activity to it (without which the Auditor cannot compare versions). A *version* here is the whole behavioral bundle — logic, prompts, weights, configuration — not merely code; and a human handbrake adjustment either runs under the existing version or is recorded as a tracked variant, never an untracked change, so the registry stays the source of truth. Stated as fields and guarantees (like the role contract, §2 — never a schema language): a registry entry declares *identity* (role, version id), *lineage* (what it derives from — predecessor or the variant_of link for a tracked handbrake variant), *status* over a declared lifecycle (at minimum: active, rolled back, suspended — with rolled-back-by-Steward and suspended-by-Auditor as distinct, attributable acts), and *activation time*; and every recorded action carries the version that performed it, so a per-version scorecard (runs, pass rate, attributed cost) is derivable from the event history rather than separately maintained. This is what lets a flow pause on Friday and resume on Monday, and what lets a human take over a role with full context. For a takeover to be more than picking up raw state, this history must capture the *decision trail* — what was decided and why, not only what changed — so whoever inherits the role inherits the reasoning, not just the outcome. Legible reasoning, not merely stored state, is what makes a clean handover possible.
 - **Observability plane** — full-trace capture of every step, tool call, decision, cost, and output for every role. Not event logging — session-level trajectories. The raw signal the Steward, Optimizer, Auditor, and Verification consume.
 - **Control plane (the Handbrake)** — the human-with-AI-skill interface for pausing, inspecting, adjusting, and resuming any flow. Detailed below; it is the architectural centerpiece.
 
@@ -206,6 +208,16 @@ A reasonable worry is that a Board, a Governance plane, an Auditor, and a Verifi
 
 Every action class carries a declared autonomy level. Blast radius — the size and reversibility of consequences — sets the ceiling.
 
+Blast radius is two axes, not a feeling: **reach** (who is affected if this goes wrong) and **reversibility** (what undoing costs). The class takes the *worse* of the two — a trivially wide action and an irreversible narrow one are both high-blast — and when the two are in doubt, round up; that is the same fail-safe posture the novel-action rule below applies to the unclassified.
+
+| | Undo is cheap (minutes, yours) | Undo costs real effort | No undo exists |
+|---|---|---|---|
+| **Reach: inside the cell** | L3 | L2 | L1 |
+| **Reach: other cells / the org** | L2 | L1 | L1 |
+| **Reach: outside world (clients, public, regulators)** | L1 | L1 | L0 |
+
+The table is a *default mapping*, not a verdict — a cell's constitution may only tighten it (assign a lower level), never loosen it. It exists so "high blast radius" is an answer to two checkable questions rather than a judgment call made under deadline.
+
 | Level | Behavior | Use for |
 |---|---|---|
 | **L0 — Suggest** | Proposes; a human acts. | Highest-risk, irreversible actions. |
@@ -250,6 +262,8 @@ A non-authoritative system role, sibling to the Steward: the Steward optimizes f
 - Novel, high-stakes task (design a new authentication method with access rights; negotiate a binding clause) → the strongest model.
 
 **The hard constraint.** The Optimizer is **bounded by the autonomy/governance model (§8)**: the task's risk class sets a capability floor, and the Optimizer may only minimize cost *beneath* that floor. A high-blast-radius task may never be routed to a weak implementer to save money — that is not frugal, it is dangerous. Safety and quality are never traded for cost. Critically, the risk class is **constitutional input, not an Optimizer judgment**: the Optimizer optimizes beneath a floor it does not set. A role that could both classify a task's risk *and* optimize against it could quietly lower the floor to save cost — so classification is governed (§8, §17) and the Optimizer's routing is itself auditable.
+
+**The loop to guard.** There is a subtler way the floor can erode: floors are ratified by the Board, and the Board reads telemetry — much of it produced by the Optimizer itself. If Optimizer output can shape the floor it optimizes against, the role has indirectly authored its own constraint, which is invariant #10 failing in slow motion. The model closes the loop the same way §8 handles autonomy raises: telemetry may *inform* a floor proposal, but a floor change is an amendment — machine-surfaced with its **provenance visible** ("this proposal originates in Optimizer cost data"), ratified by humans who can see the source's incentive, and re-validated at compilation. Data earns a proposal; only a human moves a floor — and never on the unexamined word of the role that profits from the move.
 
 **Where it gets "best version".** When it must pick among versions of an implementer, it consumes the **Auditor's version ratings (§11)** — it does not judge version fitness itself; it routes to the version the Auditor currently rates fittest for the task class.
 
@@ -538,6 +552,15 @@ The model leans heavily on the word *constitution*. This section makes the surro
 4. **Runtime enforcement (execution layer).** Every action is checked against the encoded rules before it takes effect; violations are blocked and logged.
 
 The stage the model insists on naming, because it is the usual point of failure, is **validation**: the translation from human text to machine rules must itself be verified — every encoded rule traces to a clause, and a human (or a Verifier-class check) attests that the compiled set faithfully represents the text. An unvalidated compilation is how an organization ends up enforcing rules nobody wrote. The compilation is itself a governed, audited artifact, re-validated on every amendment. Honest caveat: faithfully turning human intent into enforceable rules is hard, and early on it is human-intensive — real work, not a free step. But it is paid *off the hot path*, once per amendment rather than once per action; the runtime stays fast because compilation happens when the constitution changes, not while work runs.
+
+**One clause, end to end.** The pipeline is easier to trust once you watch a single clause traverse it:
+
+1. **Constitution (human text):** *"No action with irreversible outside consequences is taken without a prior human decision."* — a ratified boundary clause.
+2. **Structured policy (testable statement):** this is where ambiguity is forced out, and this clause has one: "without a prior human decision" permits two readings — the human *approves* and the agent executes (L1), or the human *executes* (L0). The blast-radius default (§8: outside world × no undo → L0) resolves it, and since the mapping may only be tightened, L0 stands. The statement becomes — subject: *any role*; condition: *the action's class is rated irreversible-outside*; effect: *the agent may only propose; execution requires a human actor*; source: *the clause above*. "Irreversible outside consequences" itself becomes a property of the action-class registry (§8), not a judgment made at runtime.
+3. **Machine rule (data the runtime reads):** one registry row and one gate — `class: externally-irreversible → level: L0 · gate: suggest-only, human executes · trace: <clause ref>`.
+4. **Runtime enforcement:** every action is checked against its class *before* effect; an agent-initiated externally-irreversible action is blocked and surfaced as a suggestion to a human, and both outcomes — allow and block alike — land in the audit trail citing the clause.
+
+Validation then asks one question per rule: does the row faithfully say what the clause says? The trace field is what makes that question answerable — and what makes the block message legible to the human who hits it (*"blocked: <clause>"*, not *"blocked: policy 47"*).
 
 ```mermaid
 flowchart TD
