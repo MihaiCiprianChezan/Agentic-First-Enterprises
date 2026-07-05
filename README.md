@@ -733,3 +733,10 @@ Everything here is meant to be argued with. Where it is wrong, correct it; where
 
 
 >This is not only a theoretical thesis. A reference practical implementation sample of an Organization-Cell can be found at: https://github.com/MihaiCiprianChezan/Agentic-Enterprises-A
+
+---
+
+## License & versioning
+
+© Mihai-Ciprian Chezan. Licensed under [CC BY 4.0](LICENSE) — share and adapt freely, with
+attribution. Version history: [CHANGELOG.md](CHANGELOG.md).
