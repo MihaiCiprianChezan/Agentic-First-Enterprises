@@ -1,6 +1,6 @@
 ---
 Author: Mihai-Ciprian Chezan
-Version: 2.0.1
+Version: 2.0.2
 Date: 2026-07-07
 ---
 
@@ -29,7 +29,7 @@ Two properties define it and separate it from a conventional org chart with chat
 
 ## Contents
 
-§1 Design invariants · §2 The role as an interface · §3 The Representation & Accountability layer · §4 Operating and system roles · §5 The planes · §6 The Handbrake · §7 Agent-first, human-tolerant execution · §8 Authority and autonomy · §9 The Steward · §10 The Optimizer · §11 The Auditor · §12 Escalation and human takeover · §13 Reference topology · §14 Failure modes, guardrails, and trust boundaries · §15 Adoption sequence · §16 Cells, sovereignty, and federation · §17 Constitutional mechanics · §18 Worked examples · §19 Related work — Appendix A: the seven role contracts · Appendix B: a minimal handoff vocabulary · Appendix C: conformance profiles and checklist · Appendix D: glossary
+[§1 Design invariants](#1-design-invariants) · [§2 The role as an interface](#2-core-abstraction-the-role-as-an-interface) · [§3 The Representation & Accountability layer](#3-the-representation--accountability-layer-the-human-board) · [§4 Operating and system roles](#4-operating-and-system-roles) · [§5 The planes](#5-the-planes) · [§6 The Handbrake](#6-the-handbrake-control-plane-in-depth) · [§7 Agent-first, human-tolerant execution](#7-agent-first-human-tolerant-execution) · [§8 Authority and autonomy](#8-authority-and-autonomy-model) · [§9 The Steward](#9-the-steward-the-org-doctor-named-for-what-it-does) · [§10 The Optimizer](#10-the-optimizer-capability-to-task-matching) · [§11 The Auditor](#11-the-auditor-version-fitness-and-safety) · [§12 Escalation and human takeover](#12-escalation-and-human-takeover) · [§13 Reference topology](#13-reference-topology) · [§14 Failure modes, guardrails, and trust boundaries](#14-failure-modes-and-the-guardrails-that-contain-them) · [§15 Adoption sequence](#15-adoption-sequence-lean) · [§16 Cells, sovereignty, and federation](#16-the-cell-sovereignty-and-federation) · [§17 Constitutional mechanics](#17-constitutional-mechanics) · [§18 Worked examples](#18-worked-examples-end-to-end) · [§19 Related work](#19-related-work-positioning-and-references) — [Appendix A: the seven role contracts](#appendix-a--the-seven-role-contracts-normative-baseline) · [Appendix B: a minimal handoff vocabulary](#appendix-b--a-minimal-handoff-vocabulary-informative-proven-in-one-cell) · [Appendix C: conformance profiles and checklist](#appendix-c--conformance-profiles-and-checklist) · [Appendix D: glossary](#appendix-d--glossary-informative)
 
 ## How to read this document
 

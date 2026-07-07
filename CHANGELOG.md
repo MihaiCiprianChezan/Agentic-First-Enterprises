@@ -3,6 +3,11 @@
 All notable changes to **The Agent-Native Enterprise** specification are recorded here.
 The version in the document header is the authoritative one; every bump gets an entry.
 
+## [2.0.2] — 2026-07-07
+
+Editorial (patch). The Contents block is now clickable — every entry links to its section's
+GitHub anchor (all 23 hrefs generated from the actual heading text and verified). No content changes.
+
 ## [2.0.1] — 2026-07-07
 
 Editorial (patch, per the versioning policy). Adds [SUMMARY.md](SUMMARY.md) — an informative
