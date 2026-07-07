@@ -3,6 +3,12 @@
 All notable changes to **The Agent-Native Enterprise** specification are recorded here.
 The version in the document header is the authoritative one; every bump gets an entry.
 
+## [2.0.1] — 2026-07-07
+
+Editorial (patch, per the versioning policy). Adds [SUMMARY.md](SUMMARY.md) — an informative
+narrative companion to the spec (a two-page overview plus a twenty-line at-a-glance version;
+the spec governs on divergence) — linked from the README front matter. No normative changes.
+
 ## [2.0.0] — 2026-07-07
 
 Review pass — the spec examined against its own text, the reference implementation, and the

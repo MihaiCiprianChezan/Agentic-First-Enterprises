@@ -1,6 +1,6 @@
 ---
 Author: Mihai-Ciprian Chezan
-Version: 2.0.0
+Version: 2.0.1
 Date: 2026-07-07
 ---
 
@@ -24,6 +24,8 @@ Two properties define it and separate it from a conventional org chart with chat
 ## In one paragraph
 
 *One model, one rule of thumb: humans hold the Offices and write the constitution; agents fill the Roles and run the work; system roles keep the machine healthy (Steward), efficient (Optimizer), and trustworthy across versions (Auditor); any flow can be stopped, corrected by hand, and resumed; and a human can become any Role at any moment — bound, like every agent, by the constitution they set.*
+
+*(Prefer narrative? A two-page overview and a twenty-line at-a-glance version live in [SUMMARY.md](SUMMARY.md).)*
 
 ## Contents
 
