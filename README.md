@@ -738,7 +738,8 @@ The catalog also covers the five risk categories of the May 2026 Five Eyes joint
 | **Purpose drift** (the organization does the wrong thing flawlessly) | Periodic human-interest alignment review by the Board (§3). The constitution as a fixed reference. A binding mandate to correct. |
 | **The Board becomes a shadow operator** (it reintroduces the human bottleneck) | The Board acts only through the constitution and through bounded Role-impersonation. It never acts turn by turn. Every change is an audited amendment. |
 | **The constitution is wrong, or a crisis arrives** | A bounded, auto-expiring break-glass power for emergencies, plus a standing constitutional-review trigger. Neither can change the constitution. Both only buy time until the Board amends it (§17). |
-| **Compilation drift** (the enforced rules do not match the written text) | A validation and attestation stage. Every encoded rule traces to a constitution clause. The pipeline re-validates on every amendment (§17). |
+| **Compilation drift** (the enforced rules do not match the written text) | A validation and attestation stage. Every encoded rule traces to a ratified clause. The pipeline re-validates on every amendment (§17). |
+| **Silent non-compilation** (a ratified clause produces no rule, so a boundary goes unenforced while the compiled artifact looks clean) | Reverse-direction traceability (§17). Every ratified clause carries a recorded disposition — a compiled rule, or an attested purposive classification. No clause is undisposed. A human attests every new purposive classification, and every move of a clause from compiled to purposive. |
 
 **Operational failures**
 
@@ -1001,7 +1002,7 @@ flowchart TD
 
 The removal ladder of §17 has a top rung that the ladder itself never names: the **cell**.
 
-To charter a cell, to evaluate it, and to wind it down are acts of whoever ratified its constitution. That is the parent Board, or the supra-constitution where one exists. Those acts run against declared evidence standards, which are the same kill criteria as §15. They carry a defined disposition for the obligations of the cell and for its event history. Archive it or transfer it. Never drop it silently.
+To charter a cell, to evaluate it, and to wind it down are acts of whoever ratified its constitution. That is the parent Board, or the supra-constitution where one exists. Those acts run against declared evidence standards, which are the same kill criteria as §15. They carry a defined outcome for the obligations of the cell and for its event history. Archive it or transfer it. Never drop it silently.
 
 Cross-cell resource allocation reads *attested* scorecards. A scorecard that allocates between cells is attested outside the scored cell. Use a federation-level audit function, or mutual attestation. This is the watchers-watched discipline of §17, applied at the boundary. Self-reported fitness plus budget competition is a Goodhart machine.
 
@@ -1040,6 +1041,10 @@ Invariant #10 holds throughout. Humans author rules. Agents never do. Every mech
 
    This is where ambiguity is forced out. It is also where you discover that some clauses *cannot* reduce to a rule. Those are the purposive principles. They do not compile. They stay in human Board review (INV-10). The pipeline carries forward only the part that genuinely becomes enforceable logic.
 
+   Every clause must leave this stage with a recorded **disposition**. A clause either produces one or more rules, or it carries an attested classification as purposive. No clause may leave the stage undisposed.
+
+   The purposive bucket is a decision that a named attester makes and records. It is never a default that a clause falls into. Without that rule, the bucket becomes the route by which an inconvenient boundary disappears without a trace.
+
    What does compile lands in one of **three targets**, not one:
 
    - Per-action rules, checked before the effect.
@@ -1056,13 +1061,20 @@ Invariant #10 holds throughout. Humans author rules. Agents never do. Every mech
 
    The unifying guarantee is not the site. It is the record. **Every enforcement site appends its decision to the single tamper-evident audit surface. This covers an allow and a block alike.** In practice the per-action gate co-locates naturally with the control-plane checkpoint, because both must intercept every action anyway.
 
-**The stage that the model insists on naming is validation**, because it is the usual point of failure. The translation from human text to machine rules must itself be verified. Every encoded rule traces to a clause. A human, or a Verifier-class check, attests that the compiled set faithfully represents the text. An unvalidated compilation is how an organization ends up enforcing rules that nobody wrote.
+**The stage that the model insists on naming is validation**, because it is the usual point of failure. The translation from human text to machine rules must itself be verified.
 
-The compilation is itself a governed, audited artifact. The pipeline re-validates it on every amendment. Three adversarial residues are named here rather than assumed away:
+**Traceability must run in both directions.** Forward: every encoded rule traces to a ratified clause. Reverse: every ratified clause traces to its disposition, which is either a compiled rule or an attested purposive classification. Validation checks both directions on every compile.
+
+The two directions catch different failures, and only one of those failures is obvious. The forward check catches a rule that nobody wrote. The reverse check catches a boundary that nobody enforces. The second failure is the more dangerous of the two. A dropped clause leaves the compiled artifact looking clean, and nothing in the forward direction can see it.
+
+A human, or a Verifier-class check, then attests that the compiled set faithfully represents the text. An unvalidated compilation is how an organization ends up enforcing rules that nobody wrote. It is also how an organization ends up *not* enforcing rules that somebody did write.
+
+The compilation is itself a governed, audited artifact. The pipeline re-validates it on every amendment. Four adversarial residues are named here rather than assumed away:
 
 - **The translator and the attester are never the same implementer.** The constitution is the highest-privilege artifact in the system. An agent that attests its own translation of it reproduces the correlated-failure hole of §14, at maximum leverage.
 - **Attestation is diff-scoped.** Humans review the delta that an amendment introduces. They never re-bless the whole corpus. Blanket re-attestation invites exactly the rubber stamp that a single malicious rule edit needs.
 - **The compiled artifact is integrity-protected** between validation and runtime read. To deploy governance data is itself a maximal-blast-radius governed act. The runtime verifies that the rules that it loads match the attested artifact.
+- **Coverage is attested, not assumed.** The disposition register is machine-checkable for *completeness*: a deterministic check confirms that every clause has a disposition. It is not machine-checkable for *correctness*: whether a clause is genuinely purposive is a judgment. A human therefore attests every new purposive classification. A human also attests every move of a clause from compiled to purposive. That second act downgrades an enforced boundary, so it carries the blast radius of a governance change (§8).
 
 Honest caveat: to turn human intent into enforceable rules faithfully is hard, and early on it is human-intensive. It is real work, not a free step. But you pay it *off the hot path*. You pay it once per amendment, rather than once per action. The runtime stays fast, because compilation happens when the constitution changes, not while work runs.
 
@@ -1079,7 +1091,13 @@ Honest caveat: to turn human intent into enforceable rules faithfully is hard, a
 3. **Machine rule (data that the runtime reads):** one registry row and one gate. `class: externally-irreversible → level: L0 · gate: suggest-only, human executes · trace: <clause ref>`.
 4. **Runtime enforcement:** the system checks every action against its class *before* the effect. It blocks an agent-initiated externally-irreversible action and surfaces it to a human as a suggestion. Both outcomes land in the audit trail and cite the clause.
 
-Validation then asks one question per rule. Does the row faithfully say what the clause says? The trace field is what makes that question answerable. The trace field is also what makes the block message legible to the human who meets it: *"blocked: <clause>"*, not *"blocked: policy 47"*.
+Validation then asks two questions.
+
+Per rule: does the row faithfully say what the clause says? The trace field makes that question answerable.
+
+Per clause: did this clause produce a rule, or is it recorded and attested as purposive? The disposition register makes that question answerable.
+
+The trace field also makes the block message legible to the human who meets it: *"blocked: <clause>"*, not *"blocked: policy 47"*.
 
 ```mermaid
 flowchart TD
@@ -1629,7 +1647,8 @@ An organization between steps is **in transition, not conformant**. That is a le
 | C26 | §17: the assurance floor and ceiling are declared. Measured overhead is reported | cost attribution query |
 | C27 | §5: where a learned memory policy operates, the constitution declares which stores it may write to, and that set excludes every tamper-evident store | policy configuration and store scopes |
 | C28 | §6: the replay posture is declared — whether bit-exact re-execution is available for each implementer class, and the model snapshot is pinned where it is not | registry entry and replay drill |
-| C29 | *Federated only*, §16: both Boards ratified the treaties. Inbound treaty content is treated as untrusted. Boundary identity is assured. Cell-lifecycle disposition is agreed | treaty and boundary records |
+| C29 | §17: traceability runs in both directions. Every ratified clause carries a recorded disposition — a compiled rule, or an attested purposive classification — and no clause is undisposed | the clause-disposition register |
+| C30 | *Federated only*, §16: both Boards ratified the treaties. Inbound treaty content is treated as untrusted. Boundary identity is assured. The cell-lifecycle outcome is agreed | treaty and boundary records |
 
 ## Appendix D — glossary (informative)
 
@@ -1650,6 +1669,7 @@ Each term links to its defining section. The definition there is the normative o
 - **Variant** — a tracked derivation of a version. Every human takeover opens one (§5, §12).
 - **Probationary** — the registry status of a new version, until it earns *active* under the evidence rule (§5, §11).
 - **Decision trail** — the *why* behind each recorded act. This is what a takeover inherits (§5).
+- **Disposition** — what the compilation pipeline did with one ratified clause: it produced a rule, or it classified the clause as purposive. Every clause has one, and the disposition register records them all (§17).
 - **Effects ledger** — the record that makes a retry safe: attempted, completed, or failed, per idempotency key (HB-2).
 - **Mediated capture** — a trace that the runtime records at the tool-call boundary, rather than one that the measured role emits about itself (§5).
 - **Safe mode** — the degraded state that the constitution declares, for when an escalation finds no human (§11, §12).

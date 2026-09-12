@@ -50,6 +50,17 @@ interruptibility lineage all verified.
   the surface form of a command.
 - **§14** — a new subsection on the July 2026 agent containment failure, read against this model.
   The lesson is that the failure was organizational, not architectural.
+- **§17 — reverse-direction traceability.** The prior text checked traceability in one direction
+  only: every compiled rule traces to a clause. It acknowledged that purposive clauses do not
+  compile, but never required that partition to be attested, so a ratified clause could be sorted
+  silently into the non-compiling bucket and leave a boundary unenforced. Nothing in the forward
+  direction could detect it, and the compiled artifact still looked clean. Every clause must now
+  leave the translation stage with a recorded disposition — a compiled rule, or an attested
+  purposive classification — and no clause may be undisposed. Completeness of the register is a
+  deterministic check. Correctness of a purposive classification is a human attestation, and a
+  move from compiled to purposive carries the blast radius of a governance change. New §14 failure
+  row *silent non-compilation*, fourth adversarial residue in §17, and new checklist row C29. The
+  Federated-only row moves to C30.
 
 **Evidence refreshed:** the NVIDIA AVO harness result as the central empirical case for the whole
 document, the Five Eyes joint guidance of 1 May 2026, the OWASP 2026 agentic top ten, the
