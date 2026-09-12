@@ -91,6 +91,26 @@ interruptibility lineage all verified.
   which *run* holds, and the Steward monitors it. The mode itself stays static: a role that
   re-declared its own takeover mode from telemetry would author its own governance (INV-10).
   Checklist row C2 extended.
+- **§14 — the federation-identity trust root is named.** The boundary said "authenticated cell and
+  Director identity" without saying who holds the key. A2A v1.0 permits an agent to sign its own
+  Agent Card, so the default configuration of the obvious mechanism lets a Director attest itself
+  and makes the boundary circular. The trust root must sit outside the Director — a Board-held key,
+  a chain to a Board-controlled root, or a registry that neither Director operates. Identity must
+  also attest the seat rather than the build, or a redeploy breaks the treaty (INV-1).
+- **§16 — peer compromise and treaty suspension.** New subsection. Amending a treaty is Board-gated
+  and far too slow for a compromised peer, and revoking a credential does not stop an in-flight
+  session — 2026 security research documents agents that continued to act on revoked credentials.
+  Rather than invent a mechanism, the treaty axis reuses the §11 breaker: unilateral immediate
+  suspension on a declared exposure signal, enforced as a Governance-plane predicate at the port so
+  in-flight exchanges stop at their pre-effect check, with resumption requiring a human decision
+  and re-ratification by both Boards. The constitution declares the signals and the escalation
+  ceiling. New checklist row C32. C31 loses the boundary-identity clause to C32.
+- **§19 — two corrections and two additions.** A2A v1.0 shipped in March 2026, not August 2026 —
+  August was the date it joined the foundation. The IETF identity-chaining work has advanced to
+  IESG approval. Added the CSA *Non-Human Identity Governance Vacuum* report, which sets the
+  minutes-not-hours revocation bar behind §16's breaker, and Kang and Diponegoro on governance gaps
+  in interoperability protocols, which independently concludes that governance is a missing layer
+  *above* the protocols. That is exactly where §16 puts the treaty.
 - **How to read, maturity** — the reference cell does not yet implement the clause-disposition
   register. It traces rules forward to clauses and checks the reverse direction by inspection,
   which is adequate at twelve rules and is not an auditable artifact. Stated in the document

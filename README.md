@@ -812,7 +812,13 @@ Guardrails contain failures. Some things are *assumptions* instead. They are not
 
 - **Federation identity.** Director-to-Director treaties assume that each Director is who it claims to be. Inter-cell trust therefore requires authenticated cell identity and Director identity. Without it, a federation has an impersonation problem that treaties alone do not solve.
 
-  The model requires identity assurance at cell boundaries. It does not prescribe the mechanism. Mechanisms now exist. A2A reached v1.0 with signed Agent Cards, and both major agent protocols now sit under one neutral foundation. Enterprise agent-identity platforms reached general availability during 2026. An IETF draft extends token exchange to multi-hop delegation chains. See §19.
+  The model requires identity assurance at cell boundaries. It does not prescribe the mechanism. Mechanisms now exist. A2A reached v1.0 with signed Agent Cards, and both major agent protocols now sit under one neutral foundation. Enterprise agent-identity platforms reached general availability during 2026. The IETF work that extends token exchange to multi-hop delegation chains reached IESG approval. See §19.
+
+  Two properties are required of whatever mechanism a cell adopts, because the available standards permit configurations that do not satisfy this boundary.
+
+  **The trust root sits outside the Director.** A Director that signs its own identity attests itself, and the boundary becomes circular. This is the §17 residue that separates the translator from the attester, applied to identity. Three forms satisfy the boundary. The Board holds the signing key. Or the chain of trust resolves to a root that the Board controls. Or a registry that neither Director operates vouches for the identity. A self-signed peer identity satisfies none of them, whatever the protocol permits.
+
+  **Identity attests the seat, not the build.** A treaty binds a Role (INV-1). An identity document that names one implementer instance breaks the treaty on the next deployment of that implementer.
 
 - **Human-channel identity.** The handbrake, injection, break-glass, and Board ratification all presuppose an authenticated, attributable human identity. This is the intra-cell mirror of the federation-identity assumption.
 
@@ -946,6 +952,7 @@ This yields two distinct paths. To keep them separate is what keeps a federation
    - **Treaty traffic is data.** The port of the Director applies the full untrusted-input posture to *inbound* treaty content. A peer cell is untrusted external world for content, not only for access (§14). A compromised peer that exfiltrates or poisons *within* the authorized envelope is treaty-compliant, and limit checks cannot see it.
    - **The envelope is watched.** Volume drift and content drift against the treaty baseline is a standing Steward signal and Auditor signal, in both cells.
    - **A treaty declares vocabulary, not only limits.** See the subsection below. Two sovereign cells hold two independent ontologies, and a limit check cannot detect a disagreement about meaning.
+   - **A compromised peer is suspended, not renegotiated.** See the subsection below. To amend a treaty is Board-gated and slow, which is correct for a renegotiation and far too slow for a compromise.
 
 2. **Relationship and exception — Board to Board.** Anything outside the standing contract escalates to the Boards. This covers a new relationship, a dispute, a boundary change, and a conflict of interests between cells. Boards negotiate the relationships. Directors execute the agreed exchange. This is the ordinary escalation rule (§12), firing at a cell boundary instead of inside a flow.
 
@@ -965,6 +972,27 @@ Four rules apply:
 4. **Semantic drift is a watched signal.** The envelope-watching rule above already covers it. A change in the meaning of an exchanged term appears as content drift against the treaty baseline, in both cells.
 
 The result is not agreement. The result is that a disagreement about meaning surfaces as an escalation to two accountable Boards, rather than as two internally consistent cells that quietly act on contradictory numbers.
+
+### Peer compromise and treaty suspension
+
+A peer cell is sometimes compromised. Its identity key leaks, or its Director is subverted, or an exposure signal names its credentials. The cell on this side of the boundary must stop the exchange in minutes.
+
+Two mechanisms look like the answer and are not.
+
+**A treaty amendment is too slow.** To change a treaty is a high-blast-radius act that both Boards gate (§8). That is correct for a renegotiation. A Board cycle is orders of magnitude slower than the attacker.
+
+**Credential revocation alone is insufficient.** To revoke a credential stops the issue of new credentials. It does not stop a session that is already open. Published 2026 security research documents agents that continued to act on revoked credentials, and it separates revocation from de-provisioning for this reason (§19).
+
+**The model already owns the correct mechanism, on a different axis.** §11 defines a breaker with exactly the required shape. The pause is unilateral, because a pause is safe. The un-pause is a human act. The suspension compiles into a Governance-plane predicate and the plane enforces it at the action site, which blocks in-flight actions rather than only new dispatch.
+
+Treaty suspension reuses that mechanism at the cell boundary. Four rules apply:
+
+1. **Suspension is unilateral and immediate.** A declared exposure signal suspends the treaty without a Board decision and without a per-event human approval. To wait for a human here reproduces the latency that the mechanism exists to remove.
+2. **The plane enforces it, not the Director.** The suspension compiles into a Governance-plane predicate at the port, so in-flight exchanges stop at their pre-effect check. Enforcement must not depend on the Director noticing.
+3. **Resumption is a Board act, on both sides.** To suspend is unilateral. To resume requires a human decision and re-ratification by both Boards, because the treaty is the artifact in question. The asymmetry of §11 holds here without change.
+4. **The constitution declares the signals and the ceiling.** It names which exposure signals fire the breaker. It also declares the time within which a suspension must reach both Boards, exactly as §11 declares a human-response SLA.
+
+The cost of a false positive is a halted treaty and two notified Boards. The cost of a false negative is an authenticated attacker inside the envelope. The bar is set accordingly.
 
 ### Federation and the optional supra-constitution
 
@@ -1487,9 +1515,11 @@ Two honest caveats belong with that number. The result covers the public set onl
 **Identity and the protocol layer (candidate mechanisms for §5, §6, §14, and §16 — the model prescribes none)**
 
 - Model Context Protocol — Anthropic, 2024. Donated to the Agentic AI Foundation under the Linux Foundation in December 2025. By early 2026 it reported 97 million monthly SDK downloads across Python and TypeScript — https://modelcontextprotocol.io/
-- Agent2Agent (A2A) Protocol — Google, 2025. Became a hosted project of the same foundation in August 2026, so one neutral body now stewards both the agent-to-tool layer and the agent-to-peer layer. Version 1.0 adds signed Agent Cards, which is a concrete mechanism for the federation-identity assumption of §14 — https://a2a-protocol.org/
+- Agent2Agent (A2A) Protocol — Google, 2025. Version 1.0 shipped in March 2026 and added cryptographically signed Agent Cards, using JWS (RFC 7515) over a canonical form (RFC 8785). A2A became a hosted project of the same foundation in August 2026, so one neutral body now stewards both the agent-to-tool layer and the agent-to-peer layer. This is the concrete mechanism for the federation-identity assumption of §14, with one configuration caveat that §14 states: the protocol permits an agent to sign its own card, and a self-signed Director card does not satisfy the boundary. Use the chained or registry-vouched form — https://a2a-protocol.org/
 - Microsoft Entra Agent ID — reached general availability in April 2026. An identity platform for agents, built on OAuth, MCP, and A2A — https://learn.microsoft.com/en-us/entra/agent-id/what-is-microsoft-entra-agent-id
-- IETF OAuth identity chaining, which extends RFC 8693 token exchange to multi-hop agentic delegation. The mechanism that makes a delegation chain verifiable end to end, rather than asserted — https://datatracker.ietf.org/wg/oauth/documents/
+- OAuth Identity and Authorization Chaining Across Domains (IETF OAuth working group), which extends RFC 8693 token exchange across trust domains. This is the mechanism that makes a delegation chain verifiable end to end, rather than asserted. The draft received IESG approval and is on track to become a Proposed Standard. It answers a different question from an Agent Card. A card says who a peer is. A chain says on whose behalf, and through what path — https://datatracker.ietf.org/doc/draft-ietf-oauth-identity-chaining/
+- Governance Gaps in Agent Interoperability Protocols: What MCP, A2A, and ACP Cannot Express — Kang and Diponegoro, arXiv, June 2026. Applies a six-dimension governance taxonomy and finds that no current protocol encodes the primitives that a governed agent community needs. Its conclusion is that governance is a missing architectural layer *above* the interoperability standards. That is the layer §16 puts the treaty in, and it is independent support for keeping the treaty a Board-ratified artifact rather than a protocol feature — https://arxiv.org/abs/2606.31498
+- The Non-Human Identity Governance Vacuum (Cloud Security Alliance), 20 May 2026. Reports that 78% of organizations have no documented policy for creating or removing AI identities, and that only 20% have a formal process to revoke credentials. Sets the target time-to-revoke in minutes rather than hours, through workflows that are pre-authorized to fire on high-confidence exposure signals without a per-event human approval. This is the evidence behind the unilateral treaty-suspension breaker in §16, and behind the separation of revocation from termination of an in-flight session.
 - CoSAI Workstream 4: Agentic Identity and Access Management, March 2026. An industry reference architecture for agent identity.
 - Agent Payments Protocol (AP2) — cryptographic human-authorized mandates for agent-initiated payments. An existence proof that an irreversible effect can bind to explicit human authority (§17, the legal interface) — https://ap2-protocol.org/
 - OpenTelemetry GenAI semantic conventions — reached v1.40.0 in February 2026. A vendor-neutral trace format that covers agent orchestration, tool calls, and evaluation. A candidate mechanism for the mediated capture that §5 requires — https://opentelemetry.io/
@@ -1687,7 +1717,8 @@ An organization between steps is **in transition, not conformant**. That is a le
 | C28 | §6: the replay posture is declared — whether bit-exact re-execution is available for each implementer class, and the model snapshot is pinned where it is not | registry entry and replay drill |
 | C29 | §17: traceability runs in both directions. Every ratified clause carries a recorded disposition — a compiled rule, or an attested purposive classification — and no clause is undisposed | the clause-disposition register |
 | C30 | §14: a racing second writer to one flow is refused at the append, not only prevented by a lock | concurrent-writer test against the event store |
-| C31 | *Federated only*, §16: both Boards ratified the treaties. Treaties declare the vocabulary of every exchanged term, and an undefined term escalates. Inbound treaty content is treated as untrusted. Boundary identity is assured. The cell-lifecycle outcome is agreed | treaty and boundary records |
+| C31 | *Federated only*, §16: both Boards ratified the treaties. Treaties declare the vocabulary of every exchanged term, and an undefined term escalates. Inbound treaty content is treated as untrusted. The cell-lifecycle outcome is agreed | treaty records |
+| C32 | *Federated only*, §14 and §16: boundary identity chains to a root outside the Director and names the seat, not the build. The treaty-suspension breaker was exercised — a declared signal suspended the treaty unilaterally, the plane stopped in-flight exchanges, and both Boards re-ratified before resumption | identity chain plus a suspension drill |
 
 ## Appendix D — glossary (informative)
 
