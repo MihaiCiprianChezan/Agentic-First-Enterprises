@@ -45,8 +45,6 @@ These parts are informative: the one-paragraph summary, the contents, the §13 d
 
 The model deliberately leaves some values to each organization. In those places it says *declared in the constitution*. That is delegation. It is not an unspecified gap.
 
-**Language.** This document uses controlled English, in the style of ASD-STE100 Simplified Technical English. Normative statements follow the strict rules: one idea per sentence, active voice, and no semicolons. Explanatory prose follows the same structural rules but keeps a wider vocabulary. The goal is one reading per sentence, because an implementer or an agent must parse this text without an author to ask.
-
 **Maturity.** The reference cell implements §1 to §15 and §17 to §18 at least once, with two exceptions named here rather than left for an auditor to find. The clause-disposition register of §17 (checklist row C29) is specified but not yet built. The reference cell traces rules forward to clauses and checks the reverse direction by inspection. That is adequate at twelve rules, and it is not an auditable artifact. The federation layer of §16 — treaties and the supra-constitution — is at design stage. No two-cell deployment has exercised it. This document labels both speculative until they are built.
 
 **Evidence base.** Where this document cites a measurement, a regulation, or an incident, the citation carries its date. The evidence base was verified in September 2026. §19 holds the sources.
