@@ -61,6 +61,40 @@ interruptibility lineage all verified.
   move from compiled to purposive carries the blast radius of a governance change. New §14 failure
   row *silent non-compilation*, fourth adversarial residue in §17, and new checklist row C29. The
   Federated-only row moves to C30.
+- **§17 — a rule never outlives its clause.** Every rule carries the content hash of its source
+  clause. The runtime refuses to load a rule whose hash no longer matches the ratified text, so an
+  amended clause cannot leave an old rule enforcing superseded wording. A stale rule fails closed
+  and waits for re-attestation. Folded into checklist row C10 rather than a new row.
+- **§17 — break-glass expiry has an enforcement site.** The grant carries its own expiry and the
+  pre-effect check evaluates it, on the §11 precedent that a breaker is enforced by the plane
+  rather than by a reactive process. A scheduled revoker fails open, which is the one outcome the
+  subsection exists to prevent, so it may warn but may never be load-bearing. The clock must be one
+  the grant-holder cannot influence. Checklist row C22 rewritten.
+- **§14 — the fork-resistance backstop is named.** "Structural backstop" was vague enough to be
+  read as endorsing a distributed lock. A lock is advisory, and a writer stalled past its lease
+  continues believing it holds the lock, which is exactly the resumed-after-death case. The losing
+  writer must be refused at the append. New checklist row C30. The Federated-only row moves to C31.
+- **§4.2 and §4.3 — the compensation split is stated.** It was derivable from the authority scopes
+  and written nowhere. Orchestration decides whether to unwind, because the decision spans work
+  items. Execution performs the compensating call as a within-task effect. A compensating action
+  is itself side-effecting, so it carries its own action class, autonomy level, idempotency key,
+  and ledger entry. Checklist row C7 extended.
+- **§16 — treaties declare vocabulary, not only limits.** New subsection. Two cells can exchange a
+  message inside every limit and still mean different things by it, and no limit check can see
+  that. The model does not solve semantic divergence and says so. It requires four things: the
+  treaty defines every exchanged term, an undefined term is out of envelope and escalates
+  Board-to-Board, the boundary mapping passes through the §17 pipeline with its residues, and
+  semantic drift is a watched signal. Checklist row C31 extended.
+- **§2 and Appendix A — a *run* takeover mode declares its bound.** Fan-out grows over the life of
+  a cell, so a role that was human-runnable at its original load may saturate its buffers later,
+  and nobody finds out until a takeover is under way. The contract now states the condition under
+  which *run* holds, and the Steward monitors it. The mode itself stays static: a role that
+  re-declared its own takeover mode from telemetry would author its own governance (INV-10).
+  Checklist row C2 extended.
+- **How to read, maturity** — the reference cell does not yet implement the clause-disposition
+  register. It traces rules forward to clauses and checks the reverse direction by inspection,
+  which is adequate at twelve rules and is not an auditable artifact. Stated in the document
+  rather than left for an auditor to find.
 
 **Evidence refreshed:** the NVIDIA AVO harness result as the central empirical case for the whole
 document, the Five Eyes joint guidance of 1 May 2026, the OWASP 2026 agentic top ten, the

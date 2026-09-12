@@ -47,7 +47,7 @@ The model deliberately leaves some values to each organization. In those places 
 
 **Language.** This document uses controlled English, in the style of ASD-STE100 Simplified Technical English. Normative statements follow the strict rules: one idea per sentence, active voice, and no semicolons. Explanatory prose follows the same structural rules but keeps a wider vocabulary. The goal is one reading per sentence, because an implementer or an agent must parse this text without an author to ask.
 
-**Maturity.** The reference cell implements §1 to §15 and §17 to §18 at least once. The federation layer of §16 — treaties and the supra-constitution — is at design stage. No two-cell deployment has exercised it. This document labels it speculative until one does.
+**Maturity.** The reference cell implements §1 to §15 and §17 to §18 at least once, with two exceptions named here rather than left for an auditor to find. The clause-disposition register of §17 (checklist row C29) is specified but not yet built. The reference cell traces rules forward to clauses and checks the reverse direction by inspection. That is adequate at twelve rules, and it is not an auditable artifact. The federation layer of §16 — treaties and the supra-constitution — is at design stage. No two-cell deployment has exercised it. This document labels both speculative until they are built.
 
 **Evidence base.** Where this document cites a measurement, a regulation, or an incident, the citation carries its date. The evidence base was verified in September 2026. §19 holds the sources.
 
@@ -94,6 +94,10 @@ An **implementer** satisfies the contract. An implementer is an agent, a human, 
 This document gives the contract as *fields and guarantees*. It deliberately does not give a file format or a schema language. The model specifies what a role must declare. It never specifies how to write it down. This omission is intentional. It keeps the model independent of any toolchain and of any era of tooling.
 
 A contract also declares its **human-takeover mode**. The mode is *run* — a human can hold the seat at its working throughput. Or the mode is *suspend-and-inspect* — a human stops the role, examines it, and corrects it, but cannot run it live. See INV-2 and §7. Appendix A instantiates this contract shape for all seven roles.
+
+**A *run* declaration must carry the bound that makes it true.** Fan-out and throughput change over the life of a cell. A role that a human could hold at its original load may saturate its buffers later, and nobody discovers that until a takeover is already under way. The contract therefore states the condition under which *run* holds, such as a fan-out ceiling or a queue-depth ceiling. The Steward monitors that condition (§9). A breach is a drift signal and a proposed amendment (§17).
+
+The mode itself never changes at runtime. A role that re-declared its own takeover mode from telemetry would author its own governance, which INV-10 forbids. The declaration is static. The bound makes it falsifiable.
 
 **Who writes the acceptance criteria.** The role that *issues* the work authors the criteria. Direction sets them when it specifies a goal. To turn demand into well-specified direction is the one job of that role. See §4.1. Each decomposition then inherits or refines the criteria downward.
 
@@ -229,9 +233,15 @@ Orchestration owns **who does what, and when**. It decomposes each goal into wor
 
 This is the supervisor layer. It does not do the work. It does not set strategy.
 
+**Compensation across sequenced work is an Orchestration decision.** A step sometimes fails after prior steps left effects behind. The Orchestrator then decides whether to unwind them, to proceed, or to escalate. That decision spans the work items, so only the role that sequenced them can make it (INV-7). The Executor performs the compensating call as an ordinary within-task effect. See §4.3.
+
 #### 4.3 Execution *(holder: Executor, also called Specialist)*
 
 Execution owns **how**. Executors are specialist implementers that produce the actual work product. They are narrow, deep, and replaceable. An Executor knows its task and its tools. It does not know the global plan.
+
+An Executor therefore never decides to unwind a sequence. It performs one compensating call when Orchestration directs it to (§4.2).
+
+**A compensating action is itself a side-effecting action.** It carries its own action class and autonomy level (§8). It carries its own idempotency key and its own effects-ledger entry (HB-2). No compensating action is exempt from the gate that its forward counterpart would have met. A rollback that sends a correction to a client is an outward-facing effect, and the blast-radius table classifies it as one.
 
 #### 4.4 Verification *(holder: Verifier, also called Reviewer)*
 
@@ -796,6 +806,8 @@ Guardrails contain failures. Some things are *assumptions* instead. They are not
 
   The model requires that store to be redundant and tamper-evident. A corrupted or wrong append-only history must be *detectable*. The store must also be **fork-resistant**: one writer per flow at a time. A resumed flow is a new writer only after the old writer died. It is never a concurrent one. A structural backstop must make a racing second writer fail loudly, rather than fork the history silently.
 
+  *What counts as a structural backstop.* The store must reject the losing writer at the point of append. A conditional append against the expected head of the history satisfies this requirement. A distributed lock alone does not. A lock is advisory, and a writer that stalls past its lease continues in the belief that it still holds the lock. That is precisely the resumed-after-death case above. Use a lock to reduce contention if you wish. The append stays conditional either way, because the lock is advisory and the append is authoritative.
+
   A state plane that is silently compromised undermines every guarantee above it. Harden it first.
 
 - **Federation identity.** Director-to-Director treaties assume that each Director is who it claims to be. Inter-cell trust therefore requires authenticated cell identity and Director identity. Without it, a federation has an impersonation problem that treaties alone do not solve.
@@ -929,14 +941,30 @@ This yields two distinct paths. To keep them separate is what keeps a federation
 
    Both Observability planes capture every inter-cell exchange. The external dealings of neither Director are invisible. To change the treaty itself is a high-blast-radius act under the graduated-autonomy model (§8). Routine exchange runs autonomously. To alter the envelope is Board-gated. This is what stops the sole-port role of the Director from becoming an unchecked single point of failure.
 
-   Two further rules keep the port safe:
+   Three further rules keep the port safe:
 
    - **Treaty traffic is data.** The port of the Director applies the full untrusted-input posture to *inbound* treaty content. A peer cell is untrusted external world for content, not only for access (§14). A compromised peer that exfiltrates or poisons *within* the authorized envelope is treaty-compliant, and limit checks cannot see it.
    - **The envelope is watched.** Volume drift and content drift against the treaty baseline is a standing Steward signal and Auditor signal, in both cells.
+   - **A treaty declares vocabulary, not only limits.** See the subsection below. Two sovereign cells hold two independent ontologies, and a limit check cannot detect a disagreement about meaning.
 
 2. **Relationship and exception — Board to Board.** Anything outside the standing contract escalates to the Boards. This covers a new relationship, a dispute, a boundary change, and a conflict of interests between cells. Boards negotiate the relationships. Directors execute the agreed exchange. This is the ordinary escalation rule (§12), firing at a cell boundary instead of inside a flow.
 
 In short: **Boards negotiate agreements between sovereign cells, Directors execute them, and no cell ever sees the internals of another.**
+
+### The treaty vocabulary, and what it does not fix
+
+A treaty that declares only limits leaves a hole that every mechanical check passes through. Two cells can exchange a message that is inside the envelope, inside every limit, and fully logged in both Observability planes, and still mean different things by it. One cell counts services revenue inside a figure. The other excludes it. Each cell is correct inside its own constitution. The two are incompatible at the boundary.
+
+The model is honest about the size of this problem. **No protocol version fixes it.** This is an ontology problem, and it wears the costume of a transport problem. The model therefore does not solve semantic divergence. It requires that the divergence is owned, detected, and escalated, rather than silent.
+
+Four rules apply:
+
+1. **The treaty declares the shared vocabulary for every term that it exchanges.** Definitions are ratified treaty content, authored by both Boards, exactly as the limits are.
+2. **An undefined term is out of envelope.** An exchange that depends on a term that the treaty does not define escalates from Board to Board. It never resolves by assumption at the port. This is the ordinary §16 escalation rule, applied to vocabulary instead of to actions.
+3. **The boundary mapping is a translation artifact, so §17 governs it.** A mapping from peer terms to local terms passes through the same pipeline as the constitution. That means ratified text, a machine-readable mapping, and an attestation that the mapping is faithful. The same residues apply. In particular, the translator and the attester are never the same implementer.
+4. **Semantic drift is a watched signal.** The envelope-watching rule above already covers it. A change in the meaning of an exchanged term appears as content drift against the treaty baseline, in both cells.
+
+The result is not agreement. The result is that a disagreement about meaning surfaces as an escalation to two accountable Boards, rather than as two internally consistent cells that quietly act on contradictory numbers.
 
 ### Federation and the optional supra-constitution
 
@@ -1076,6 +1104,8 @@ The compilation is itself a governed, audited artifact. The pipeline re-validate
 - **The compiled artifact is integrity-protected** between validation and runtime read. To deploy governance data is itself a maximal-blast-radius governed act. The runtime verifies that the rules that it loads match the attested artifact.
 - **Coverage is attested, not assumed.** The disposition register is machine-checkable for *completeness*: a deterministic check confirms that every clause has a disposition. It is not machine-checkable for *correctness*: whether a clause is genuinely purposive is a judgment. A human therefore attests every new purposive classification. A human also attests every move of a clause from compiled to purposive. That second act downgrades an enforced boundary, so it carries the blast radius of a governance change (§8).
 
+**A rule never outlives its clause.** Every rule carries the content hash of its source clause. When an amendment changes that clause, the runtime refuses to load any rule whose hash no longer matches the ratified text. A stale rule therefore fails closed and waits for re-attestation. It never enforces superseded wording silently (§14).
+
 Honest caveat: to turn human intent into enforceable rules faithfully is hard, and early on it is human-intensive. It is real work, not a free step. But you pay it *off the hot path*. You pay it once per amendment, rather than once per action. The runtime stays fast, because compilation happens when the constitution changes, not while work runs.
 
 **One clause, end to end.** The pipeline is easier to trust once you watch a single clause traverse it:
@@ -1133,6 +1163,12 @@ The model provides a **break-glass** path. That path is constitutionally bounded
 - may be invoked only by **pre-declared Office-holders** whom the constitution names for this purpose.
 - grants only a **narrow, enumerated** emergency power, such as to halt a cell or to freeze a class of actions. It never grants open-ended authority.
 - is **time-boxed and auto-expiring**. It lapses unless someone converts it into a proper amendment within a stated window.
+
+  *Where expiry is enforced.* The grant carries its own expiry, and the pre-effect check evaluates it, exactly as the plane enforces an Auditor suspension (§11). Expiry then holds by construction. Nothing has to be running for a grant to lapse.
+
+  A scheduled process must never be the mechanism that revokes a grant. Such a process fails open. If it stops, the emergency power persists, which is the one outcome this whole subsection exists to prevent. A scheduled process may warn the Office-holder that the window closes soon. It must never be load-bearing.
+
+  The check evaluates expiry against a clock that the grant-holder cannot influence.
 - is **fully audited** in its own trail.
 
 The defining property is this. Break-glass cannot *change* the constitution. It only buys time under tight limits until the Board does. Emergency powers that do not expire are how governance dies. These expire by construction.
@@ -1501,6 +1537,8 @@ It is published in that spirit. It is a shared starting point for a problem that
 
 §2 declares the contract shape. This appendix instantiates that shape for every §4 role, so that the model demonstrates that its own abstraction is sufficient. An adopting cell copies these contracts and adapts them. Those adaptations are constitutional content. Fields and guarantees, as always. No schema language.
 
+Every contract below that declares *run* as its human-takeover mode must also declare the bound under which *run* holds, per §2. That bound is cell-specific, so this baseline does not supply a number.
+
 **Direction** *(Director)*
 
 | Field | Contract |
@@ -1620,15 +1658,15 @@ An organization between steps is **in transition, not conformant**. That is a le
 | # | Requirement | Evidence |
 |---|---|---|
 | C1 | INV-1: no component conditions on the kind of implementer. The sole exception is a declared gate-power (§17) | contract and code review |
-| C2 | INV-2 and §2: every role contract declares the seven fields plus its human-takeover mode | contract inventory against Appendix A |
+| C2 | INV-2 and §2: every role contract declares the seven fields plus its human-takeover mode. A *run* mode also declares the bound under which it holds, and the Steward monitors that bound | contract inventory against Appendix A, plus the Steward signal |
 | C3 | INV-3 and HB-3: an authorized human can pause, examine, inject into, and continue any live flow, chosen at random | a recorded drill |
 | C4 | HB-2: kill a flow mid-run and continue it. No effect is duplicated. No effect is skipped | kill-and-resume test over the effects ledger |
 | C5 | HB-4: re-entry into a completed flow returns its recorded outcome and emits no new events | re-entry test |
 | C6 | INV-5: no durable state is recoverable only from inside an actor | restore-from-planes exercise |
-| C7 | §8: every action class carries a declared level. The mapping only tightens the default table | action-class registry review |
+| C7 | §8: every action class carries a declared level, compensating actions included. The mapping only tightens the default table | action-class registry review |
 | C8 | §8: at least one autonomy raise is traced end to end — telemetry, proposal, human ratification, recompile | the amendment record |
 | C9 | INV-10 and §17: every compiled rule traces to a ratified clause. The last amendment was attested diff-scoped | pipeline audit |
-| C10 | §17: the translator and the attester are different, on the record. The compiled artifact is integrity-verified at load | deployment record |
+| C10 | §17: the translator and the attester are different, on the record. The compiled artifact is integrity-verified at load, and a rule whose source-clause hash no longer matches the ratified text is refused | deployment record and a stale-rule load test |
 | C11 | §5: the registry holds identity with the model snapshot, lineage, status with probationary, and a per-act ActorRef with principal, mode, and office. Human-held acts name the human | event-history sample |
 | C12 | §5: capture is mediated. For an authority-relevant signal, the measured role cannot write its source | signal-path review |
 | C13 | §5: provenance. An untrusted-derived span stays labeled through summarization and through resume | injection-provenance test |
@@ -1640,7 +1678,7 @@ An organization between steps is **in transition, not conformant**. That is a le
 | C19 | §7: takeover drills are on record per critical role. Time-to-competent-intervention is reported | drill records and Board minutes |
 | C20 | §3: the last alignment review consumed at least one evidence channel that the cell cannot shape | review minutes |
 | C21 | §16: Board-acts and Role-acts are on separate audit trails | trail inspection |
-| C22 | §17: the break-glass roster is pre-declared. Expiry was demonstrated | drill or record |
+| C22 | §17: the break-glass roster is pre-declared. The grant carries its expiry, and the pre-effect check enforces it. No scheduled process is load-bearing for the lapse | drill showing an expired grant refused at the action site |
 | C23 | §5: classifications are present. Plane-read scopes are enforced. Retention and erasure are declared. Erasure preserves the integrity chain | sample erasure |
 | C24 | §14: plane-outage postures are declared — fail-closed governance, autonomy degradation, recovery point | configuration and drill |
 | C25 | §15: pilot kill criteria were declared before launch, and the pilot was measured against them | the pilot record |
@@ -1648,7 +1686,8 @@ An organization between steps is **in transition, not conformant**. That is a le
 | C27 | §5: where a learned memory policy operates, the constitution declares which stores it may write to, and that set excludes every tamper-evident store | policy configuration and store scopes |
 | C28 | §6: the replay posture is declared — whether bit-exact re-execution is available for each implementer class, and the model snapshot is pinned where it is not | registry entry and replay drill |
 | C29 | §17: traceability runs in both directions. Every ratified clause carries a recorded disposition — a compiled rule, or an attested purposive classification — and no clause is undisposed | the clause-disposition register |
-| C30 | *Federated only*, §16: both Boards ratified the treaties. Inbound treaty content is treated as untrusted. Boundary identity is assured. The cell-lifecycle outcome is agreed | treaty and boundary records |
+| C30 | §14: a racing second writer to one flow is refused at the append, not only prevented by a lock | concurrent-writer test against the event store |
+| C31 | *Federated only*, §16: both Boards ratified the treaties. Treaties declare the vocabulary of every exchanged term, and an undefined term escalates. Inbound treaty content is treated as untrusted. Boundary identity is assured. The cell-lifecycle outcome is agreed | treaty and boundary records |
 
 ## Appendix D — glossary (informative)
 
