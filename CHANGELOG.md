@@ -3,6 +3,62 @@
 All notable changes to **The Agent-Native Enterprise** specification are recorded here.
 The version in the document header is the authoritative one; every bump gets an entry.
 
+## [3.0.0] — 2026-09-12
+
+Fact-check pass, evidence refresh to the September 2026 state of the art, and a complete
+re-authoring of the text in controlled English.
+
+**Major bump.** No invariant changed meaning. Every sentence changed form, and one normative
+claim was corrected, so a reader of 2.0.2 must re-read rather than diff. The versioning policy
+calls a change to the meaning of a normative requirement major. §6's replay claim was a
+normative assumption that implementations were entitled to rely on, and it was wrong.
+
+**Corrections found by the fact-check:**
+- **§19 citation error.** arXiv 2506.07962 was labeled *Great Models Think Alike*. That paper is
+  arXiv 2502.04313. 2506.07962 is *Correlated Errors in Large Language Models*, and it is the
+  correct support for §14's correlated-model-failure boundary. Both are now cited, with the
+  distinction stated.
+- **§6 replay, corrected.** The prior text asserted that an LLM step is not reproducible in
+  general. That is now too strong. Temperature-zero nondeterminism traces to batch-size-dependent
+  reduction kernels, and batch-invariant kernels give bit-identical output at roughly a third of
+  throughput. Bit-exact re-execution is now an engineering choice with a measured price where you
+  control the serving stack. It stays unavailable on a hosted endpoint you do not control. The
+  model-snapshot pin and the decision trail remain required, and the section says why.
+- **§19 EU AI Act timeline, superseded.** The Digital Omnibus on AI (Regulation (EU) 2026/1744)
+  entered into force on 27 July 2026. Annex III high-risk obligations moved from 2 August 2026 to
+  2 December 2027. Embedded high-risk moved to 2 August 2028. Article 50 was not deferred. The
+  text now states plainly that the deadline moved and Article 14's substance did not.
+- **§15 base rates, dated and attributed.** Vague appeals to pilot-failure rates are replaced with
+  sourced, dated figures, including the one that matters most for this model: roughly one
+  organization in five reports a mature agentic governance model.
+
+**Verified unchanged.** Every 2026 arXiv citation in §19 was checked against the paper and is
+correct as cited. The Gartner forecast, the CMR article, the MAST taxonomy, and the
+interruptibility lineage all verified.
+
+**New normative content (minor, additive):**
+- **§5** — a learned memory policy may operate over working context. It must never write to the
+  audit trail, the event history, or the effects ledger. Learned forgetting is a governance
+  hazard, because a policy optimized for task success has an incentive to discard the records
+  that make an act attributable. New checklist row C27.
+- **§6, HB-1** — implementations should checkpoint at effect boundaries rather than at fixed
+  intervals, on published evidence that over 75% of agent turns produce no recovery-relevant
+  state. The checkpointer-against-durable-execution distinction is now stated.
+- **§6** — the replay posture must be declared per implementer class. New checklist row C28.
+- **§14** — a new failure row, *allowlist inversion*, with the two 2026 CVEs behind it.
+  Authorization binds to the effect and the identity at the tool-call boundary. It never binds to
+  the surface form of a command.
+- **§14** — a new subsection on the July 2026 agent containment failure, read against this model.
+  The lesson is that the failure was organizational, not architectural.
+
+**Evidence refreshed:** the NVIDIA AVO harness result as the central empirical case for the whole
+document, the Five Eyes joint guidance of 1 May 2026, the OWASP 2026 agentic top ten, the
+Singapore IMDA agentic framework, the NIST agent-standards initiative, the honest gap in NIST AI
+RMF and ISO/IEC 42001 for agentic risk, A2A and MCP under one foundation, agent-identity
+mechanisms that reached general availability, OpenTelemetry GenAI conventions as a candidate for
+mediated capture, Policy Cards and layered-translation prior art for §17, and the 2026 memory and
+continual-learning direction. Every §19 entry now carries a date.
+
 ## [2.0.2] — 2026-07-07
 
 Editorial (patch). The Contents block is now clickable — every entry links to its section's
